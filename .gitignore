@@ -33,3 +33,6 @@ tf.plan
 /docs/_build/
 /plan.stderr
 /plan.stdout
+__pycache__
+tf-apply-trace.txt
+tf-destroy-trace.txt

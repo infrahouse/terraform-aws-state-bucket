@@ -6,7 +6,12 @@ resource "aws_s3_bucket" "state-bucket" {
   lifecycle {
     prevent_destroy = false
   }
-  tags = var.tags
+  tags = merge(
+    var.tags,
+    {
+      "lock_table" : aws_dynamodb_table.terraform_locks.name
+    }
+  )
 }
 
 resource "aws_s3_bucket_versioning" "enabled" {
