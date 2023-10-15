@@ -1,4 +1,5 @@
 boto3 ~= 1.26
-infrahouse-toolkit ~= 2.0
+infrahouse-toolkit ~= 2.4
 pyhcl ~= 0.4
 yamllint ~= 1.29
+pytest ~= 7.4
