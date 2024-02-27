@@ -7,6 +7,7 @@ resource "aws_s3_bucket" "state-bucket" {
     prevent_destroy = false
   }
   tags = merge(
+    local.tags,
     var.tags,
     {
       "lock_table" : aws_dynamodb_table.terraform_locks.name

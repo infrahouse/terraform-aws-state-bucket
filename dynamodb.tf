@@ -6,10 +6,13 @@ resource "aws_dynamodb_table" "terraform_locks" {
   name         = random_pet.suffix.id
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
-  tags = merge(var.tags, {
+  tags = merge(
+    local.tags,
+    var.tags,
+    {
     "state_bucket" : var.bucket
-  })
-
+    }
+  )
 
   attribute {
     name = "LockID"
