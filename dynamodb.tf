@@ -10,7 +10,8 @@ resource "aws_dynamodb_table" "terraform_locks" {
     local.tags,
     var.tags,
     {
-    "state_bucket" : var.bucket
+      "state_bucket" : var.bucket
+      VantaNoAlert : "Table used for Terraform state lock and does not contain user data"
     }
   )
 
