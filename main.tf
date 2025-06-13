@@ -11,6 +11,7 @@ resource "aws_s3_bucket" "state-bucket" {
     var.tags,
     {
       "lock_table" : aws_dynamodb_table.terraform_locks.name
+      "module_version" : local.module_version
     }
   )
 }
@@ -38,4 +39,37 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_policy" "state-bucke" {
+  bucket = aws_s3_bucket.state-bucket.id
+  policy = data.aws_iam_policy_document.enforce_ssl_policy.json
+}
+
+data "aws_iam_policy_document" "enforce_ssl_policy" {
+  statement {
+    sid    = "AllowSSLRequestsOnly"
+    effect = "Deny"
+
+    actions = [
+      "s3:*",
+    ]
+
+    resources = [
+      aws_s3_bucket.state-bucket.arn,
+      "${aws_s3_bucket.state-bucket.arn}/*",
+    ]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+
 }
