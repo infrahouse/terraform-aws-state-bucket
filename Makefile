@@ -26,13 +26,16 @@ help: ## Print this help
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 
-.PHONY: hooks
-hooks:
-	test -f .git/hooks/pre-commit || cp hooks/pre-commit .git/hooks/pre-commit
+.PHONY: install-hooks
+install-hooks:  ## Install repo hooks
+	@echo "Checking and installing hooks"
+	@test -d .git/hooks || (echo "Looks like you are not in a Git repo" ; exit 1)
+	@test -L .git/hooks/pre-commit || ln -fs ../../hooks/pre-commit .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
 
 
 .PHONY: bootstrap
-bootstrap: hooks  ## Build development environment
+bootstrap: install-hooks  ## Build development environment
 	pip install -r requirements.txt
 
 .PHONY: bootstrap-ci
