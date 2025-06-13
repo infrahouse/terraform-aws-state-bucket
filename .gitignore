@@ -36,3 +36,4 @@ tf.plan
 __pycache__
 tf-apply-trace.txt
 tf-destroy-trace.txt
+terraform.tfvars

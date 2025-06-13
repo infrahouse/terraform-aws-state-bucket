@@ -11,6 +11,7 @@ resource "aws_s3_bucket" "state-bucket" {
     var.tags,
     {
       "lock_table" : aws_dynamodb_table.terraform_locks.name
+      "module_version" : local.module_version
     }
   )
 }

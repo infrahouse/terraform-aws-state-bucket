@@ -19,6 +19,9 @@ endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+TEST_REGION="us-west-1"
+TEST_ROLE="arn:aws:iam::303467602807:role/state-bucket-tester"
+
 help: ## Print this help
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
@@ -43,10 +46,29 @@ lint:  ## Check code style
 		.readthedocs.yaml
 	terraform fmt -check -recursive
 
+.PHONY: test
+test:  ## Run tests on the module
+	pytest -xvvs tests
+
+.PHONY: test-keep
+test-keep:  ## Run a test and keep resources
+	pytest -xvvs \
+		--aws-region=${TEST_REGION} \
+		--test-role-arn=${TEST_ROLE} \
+		--keep-after \
+		tests/test_module.py
+
+.PHONY: test-clean
+test-clean:  ## Run a test and destroy resources
+	pytest -xvvs \
+		--aws-region=${TEST_REGION} \
+		--test-role-arn=${TEST_ROLE} \
+		tests/test_module.py
 
 .PHONY: format
 format:  ## Format terraform files
 	terraform fmt -recursive
+	black tests/
 
 .PHONY: init
 init:
