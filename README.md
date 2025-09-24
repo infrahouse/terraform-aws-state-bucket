@@ -1,3 +1,31 @@
+# Module terraform-aws-state-bucket
+
+Amazon S3 backend is a popular storage for a Terraform state.
+
+[Hashicorp](https://developer.hashicorp.com/terraform/language/settings/backends/s3) itself 
+and [Gruntwork](https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697e68fa)
+developed recommendations for the S3 bucket configuration, 
+so storing the Terraform state is safe.
+
+The module creates an S3 bucket, a DynamoDB table for a state lock, 
+and implements these recommendations.
+
+The DynamoDB table name is generated with the state bucket name 
+prefix.
+
+The S3 bucket and DynamoDB table names and ARNs are exported as module 
+outputs.
+
+## Usage
+
+```hcl
+module "state-bucket" {
+  source  = "infrahouse/state-bucket/aws"
+  version = "2.1.3"
+
+  bucket  = "bucket-name"
+}
+```
 ## Requirements
 
 | Name | Version |
