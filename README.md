@@ -1,43 +1,15 @@
-# Module terraform-aws-state-bucket
-
-Amazon S3 backend is a popular storage for a Terraform state.
-
-[Hashicorp](https://developer.hashicorp.com/terraform/language/settings/backends/s3) itself 
-and [Gruntwork](https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697e68fa)
-developed recommendations for the S3 bucket configuration, 
-so storing the Terraform state is safe.
-
-The module creates an S3 bucket, a DynamoDB table for a state lock, 
-and implements these recommendations.
-
-The DynamoDB table name is generated with the state bucket name 
-prefix.
-
-The S3 bucket and DynamoDB table names and ARNs are exported as module 
-outputs.
-
-## Usage
-
-```hcl
-module "state-bucket" {
-  source  = "infrahouse/state-bucket/aws"
-  version = "2.1.3"
-
-  bucket  = "bucket-name"
-}
-```
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.11 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.11, < 7.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.11 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.11, < 7.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.5 |
 
 ## Modules
@@ -50,10 +22,12 @@ No modules.
 |------|------|
 | [aws_dynamodb_table.terraform_locks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table) | resource |
 | [aws_s3_bucket.state-bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket_policy.state-bucke](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
 | [aws_s3_bucket_public_access_block.public_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_s3_bucket_server_side_encryption_configuration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration) | resource |
 | [aws_s3_bucket_versioning.enabled](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
 | [random_pet.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
+| [aws_iam_policy_document.enforce_ssl_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
 
