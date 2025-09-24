@@ -21,7 +21,7 @@ outputs.
 ```hcl
 module "state-bucket" {
   source  = "infrahouse/state-bucket/aws"
-  version = "2.1.3"
+  version = "2.2.0"
 
   bucket  = "bucket-name"
 }
