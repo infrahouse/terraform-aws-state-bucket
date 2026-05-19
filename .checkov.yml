@@ -12,5 +12,7 @@ skip-check:
   - CKV2_AWS_6  # Public access block on replica - false positive, exists as separate resource
   - CKV_AWS_144  # CRR on replica - replica doesn't need its own replication
   - CKV_AWS_21  # Versioning on replica - false positive, exists as separate resource
+  - CKV_AWS_119  # KMS CMK on DynamoDB - lock table uses default encryption, no user data
+  - CKV_AWS_28  # DynamoDB PITR - lock table holds ephemeral lock metadata, backups unnecessary
 compact: true
 quiet: false
