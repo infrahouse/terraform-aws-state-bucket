@@ -37,3 +37,4 @@ __pycache__
 tf-apply-trace.txt
 tf-destroy-trace.txt
 terraform.tfvars
+.claude/reviews
