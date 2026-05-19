@@ -4,4 +4,6 @@ resource "random_pet" "bucket" {
 module "state-bucket" {
   source = "./../../"
   bucket = random_pet.bucket.id
+
+  replication_region = var.replication_region
 }

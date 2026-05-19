@@ -2,21 +2,19 @@ from pprint import pprint
 from os import path as osp
 from textwrap import dedent
 import os
+import shutil
 
 import pytest
 from pytest_infrahouse import terraform_apply
 
 
-@pytest.mark.parametrize("aws_provider_version", ["~> 5.31", "~> 6.0"])
-def test_state_bucket(
-    keep_after,
-    aws_region,
-    test_role_arn,
-    aws_provider_version,
-):
-    terraform_module_dir = "test_data/state-bucket"
-
-    # Clean up any existing Terraform state files
+def _prepare_fixture(
+    terraform_module_dir: str,
+    aws_provider_version: str,
+    aws_region: str,
+    test_role_arn: str,
+    replication_region: str,
+) -> None:
     for artifact_file in [".terraform.lock.hcl"]:
         state_path = osp.join(terraform_module_dir, artifact_file)
         try:
@@ -24,16 +22,12 @@ def test_state_bucket(
         except FileNotFoundError:
             pass
 
-    # Remove .terraform directory if it exists
     terraform_dir = osp.join(terraform_module_dir, ".terraform")
     try:
-        import shutil
-
         shutil.rmtree(terraform_dir)
     except FileNotFoundError:
         pass
 
-    # Update terraform.tf with the specified AWS provider version
     with open(osp.join(terraform_module_dir, "terraform.tf"), "w") as fp:
         fp.write(
             dedent(
@@ -54,7 +48,8 @@ def test_state_bucket(
         fp.write(
             dedent(
                 f"""
-                region = "{aws_region}"
+                region             = "{aws_region}"
+                replication_region = "{replication_region}"
                 """
             )
         )
@@ -66,9 +61,35 @@ def test_state_bucket(
                     """
                 )
             )
+
+
+@pytest.mark.parametrize("aws_provider_version", ["~> 6.0"])
+def test_state_bucket(
+    keep_after,
+    aws_region,
+    test_role_arn,
+    aws_provider_version,
+):
+    terraform_module_dir = "test_data/state-bucket"
+    replication_region = "us-east-1" if aws_region != "us-east-1" else "us-west-2"
+
+    _prepare_fixture(
+        terraform_module_dir,
+        aws_provider_version=aws_provider_version,
+        aws_region=aws_region,
+        test_role_arn=test_role_arn,
+        replication_region=replication_region,
+    )
+
     with terraform_apply(
         terraform_module_dir,
         destroy_after=not keep_after,
         json_output=True,
     ) as tf_out:
         pprint(tf_out)
+        assert tf_out["bucket_name"]["value"]
+        assert tf_out["bucket_arn"]["value"]
+        assert tf_out["lock_table_name"]["value"]
+        assert tf_out["lock_table_arn"]["value"]
+        assert tf_out["replica_bucket_name"]["value"].endswith("-replica")
+        assert tf_out["replica_bucket_arn"]["value"]
